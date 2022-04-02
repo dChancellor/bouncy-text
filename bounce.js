@@ -1,7 +1,6 @@
 const element = document.getElementById('id');
-let start, previousTimeStamp;
-let done = false;
-const animation = 'in';
+let bounceInAnimation;
+let bounceOutAnimation;
 
 const defaultProps = {
   bounceIn: {
@@ -29,8 +28,8 @@ const init = (obj) => {
   var sheet = style.sheet;
   const bounceInIndex = sheet.insertRule(`@keyframes bounceIn {}`, 0);
   const bounceOutIndex = sheet.insertRule(`@keyframes bounceIn {}`, 0);
-  const bounceInAnimation = sheet.cssRules[bounceInIndex];
-  const bounceOutAnimation = sheet.cssRules[bounceOutIndex];
+  bounceInAnimation = sheet.cssRules[bounceInIndex];
+  bounceOutAnimation = sheet.cssRules[bounceOutIndex];
   bounceInAnimation.appendRule('50% {color:blue}');
   console.log(bounceInAnimation, bounceOutAnimation);
   //   setInterval(() => {
@@ -39,4 +38,8 @@ const init = (obj) => {
   //   }, 50);
 };
 
-init(defaultProps);
+const bounce = {
+  init: () => init(),
+};
+
+export default bounce;
