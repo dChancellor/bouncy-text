@@ -1,0 +1,83 @@
+/* // 	bounce height
+// dip height
+// rise height
+// fall speed
+// hangtime
+// bounce speed */
+* {
+  margin: 0;
+  box-sizing: border-box;
+}
+:root {
+  height: 100vmin;
+  width: 100vmin;
+}
+body {
+  background-color: var(--backgroundColor);
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.container {
+  width: 500px;
+  height: 200px;
+  overflow: hidden;
+  background-color: purple;
+  color: white;
+  position: relative;
+  display: flex;
+  /* align-items: center; */
+  justify-content: center;
+  animation-name: testAnimation;
+  animation-duration: 3s;
+  animation-iteration-count: infinite;
+}
+.container > * {
+  position: absolute;
+  bottom: 100%;
+}
+
+.animated-in {
+  animation-name: bounceIn;
+  animation-duration: 1s;
+  animation-timing-function: ease-in-out;
+  animation-fill-mode: forwards;
+}
+
+@keyframes bounceIn {
+  0% {
+    bottom: 100%;
+  }
+
+  40% {
+    bottom: 0%;
+  }
+
+  75% {
+    bottom: var(--bounceHeight0);
+  }
+
+  85% {
+    bottom: 0%;
+  }
+
+  90% {
+    bottom: var(--bounceHeight1);
+  }
+
+  to {
+    bottom: 0%;
+  }
+}
+
+@keyframes testAnimation {
+  0% {
+    color: red;
+  }
+  100% {
+    color: red;
+  }
+}
