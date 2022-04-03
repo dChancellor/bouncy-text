@@ -1,3 +1,5 @@
-import bounce from '../bounce.js';
+import animation from '../build/bounce.js';
 
-bounce.init();
+animation.init();
+const items = document.getElementsByClassName('bouncers');
+animation.bounceIn(items);

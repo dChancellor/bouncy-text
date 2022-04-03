@@ -1,0 +1,23 @@
+{
+  "name": "bouncy-item",
+  "version": "1.0.0",
+  "description": "Bounce your item in and out",
+  "main": "bounce.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "build": "tsc --build",
+    "dev": "tsc -w"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dChancellor/bouncy-text.git"
+  },
+  "author": "Derek Chancellor",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/dChancellor/bouncy-text/issues"
+  },
+  "homepage": "https://github.com/dChancellor/bouncy-text#readme"
+}
