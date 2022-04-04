@@ -18,13 +18,12 @@ body {
 
 .container {
   width: 500px;
-  height: 200px;
+  height: 400px;
   overflow: hidden;
   background-color: purple;
   color: white;
   position: relative;
   display: flex;
-  /* align-items: center; */
   justify-content: center;
   animation-name: testAnimation;
   animation-duration: 3s;

@@ -1,11 +1,14 @@
-let settings = {
+let defaultSettings = {
     general: {
-        timeBetween: 4,
+        timeBetween: 3,
+        floor: 0,
+        cor: 0.75,
     },
     animations: {
-        bounceIn: { duration: 3, numberOfBounces: 1 },
+        bounceIn: { duration: 2, numberOfBounces: 3 },
     },
 };
+let settings = defaultSettings;
 const newKeyframeRule = (sheet, name) => {
     const ruleIndex = sheet.insertRule(`@keyframes ${name} {}`, 0);
     return sheet.cssRules[ruleIndex];
@@ -13,17 +16,16 @@ const newKeyframeRule = (sheet, name) => {
 const newClass = (sheet, name) => {
     sheet.insertRule(`.${name} {animation-duration: ${settings.animations[name].duration}s; animation-name: ${name}; animation-fill-mode: forwards; }`, 0);
 };
-// NOTE - Deprecated trial of actual mathematic findings of bounce mechanics
-// const lengthOfBounce = (height: number, initialVelo: number = 0):  => {
-// const gravity = 9.8;
-// const COR = 0.75;
-//   const downVelo = Math.sqrt(2 * gravity * height) + initialVelo;
-//   const upVelo = -(COR * downVelo);
-//   const newHeight = (0.5 * Math.pow(upVelo, 2)) / gravity;
-//   if(height > .5) lengthOfBounce(newHeight);
-// };
+const settingsReducer = (props) => {
+    let combinedSettings = defaultSettings;
+    combinedSettings.general = Object.assign(Object.assign({}, combinedSettings.general), props.general);
+    Object.entries(combinedSettings.animations).forEach(([key, value]) => {
+        combinedSettings.animations[key] = Object.assign(Object.assign({}, combinedSettings.animations[key]), props.animations[key]);
+    });
+    return combinedSettings;
+};
 const init = (props = settings) => {
-    settings = Object.assign(Object.assign({}, settings), props);
+    let settings = settingsReducer(props);
     const style = document.createElement('style');
     document.head.appendChild(style);
     const sheet = style.sheet;
@@ -37,28 +39,49 @@ const init = (props = settings) => {
         setup[key](emptyKeyframe, value);
     });
 };
-const generateKeyframeRule = (percent, value) => `${percent}% { bottom: ${value}%;}`;
-const topOfDiv = `bottom:0%`;
-const bottomOfDiv = `bottom: 100%`;
 const setup = {
-    bounceIn: (keyframe, settings) => {
-        let keyframePercentRemaining = 100;
-        // @ts-ignore NOTE - It actually does exist, typescript is crazy
-        keyframe.appendRule(`0% {bottom: 0%;}`);
-        for (let i = 0; i < settings.numberOfBounces; i += 1) {
-            let jumpLoop = keyframePercentRemaining / 2;
-            keyframe.appendRule(`${keyframePercentRemaining / 4}% {bottom: 0%;}`);
-            keyframe.appendRule(`${jumpLoop}% {bottom: ${jumpLoop}%;}`);
-            keyframe.appendRule(`${keyframePercentRemaining - jumpLoop / 2}% {bottom: 0%;}`);
-            keyframePercentRemaining = keyframePercentRemaining / 2;
+    bounceIn: (keyframe, props) => {
+        //@ts-ignore
+        keyframe.appendRule(`0% {bottom: 100%; animation-timing-function: ease-in;}`);
+        //@ts-ignore
+        keyframe.appendRule(`20% {bottom: ${settings.general.floor}%; animation-timing-function: ease-out;} `);
+        // 1 and 2 Bounces require hard coded math
+        if (props.numberOfBounces === 1 || props.numberOfBounces === 2) {
+            const rules = bounceReducer[props.numberOfBounces];
+            rules.forEach((rule) => {
+                //@ts-ignore
+                keyframe.appendRule(rule);
+            });
         }
-        console.log(keyframe);
+        else {
+            let lastKeyFramePercent = 20;
+            for (let i = 0; i < props.numberOfBounces; i += 1) {
+                let bounceLength = 80 / Math.pow(2, i + 1);
+                //@ts-ignore
+                keyframe.appendRule(`${lastKeyFramePercent + bounceLength / 2}% {bottom: ${bounceLength * settings.general.cor + settings.general.floor}%; animation-timing-function: ease-in;}`);
+                //@ts-ignore
+                keyframe.appendRule(`${lastKeyFramePercent + bounceLength}% {bottom: ${settings.general.floor}%; animation-timing-function: ease-out;}`);
+                lastKeyFramePercent = lastKeyFramePercent + bounceLength;
+            }
+        }
+        //@ts-ignore
+        keyframe.appendRule(`100% {bottom: ${settings.general.floor}%; animation-timing-function: ease-out;}`);
     },
+};
+const bounceReducer = {
+    1: [
+        `60% {bottom: ${50 * settings.general.cor}%; animation-timing-function: ease-in;}`,
+    ],
+    2: [
+        `46.6% {bottom: ${50 * settings.general.cor}%;animation-timing-function: ease-in; }`,
+        `73.2%{bottom:${settings.general.floor}%; animation-timing-function: ease-out;}`,
+        `86% {bottom:${25 * settings.general.cor}%; animation-timing-function: ease-in;}`,
+    ],
 };
 const animation = {
     init: (props) => init(props),
     bounceIn: (elements) => {
-        let currentElement = 0;
+        let currentElement = -1;
         setInterval(() => {
             var _a;
             (_a = elements[currentElement]) === null || _a === void 0 ? void 0 : _a.classList.remove('bounceIn');
@@ -69,28 +92,3 @@ const animation = {
     },
 };
 export default animation;
-// let keyframePercentRemaining = 100;
-// // @ts-ignore NOTE - It actually does exist, typescript is crazy
-// // keyframe.appendRule(generateKeyframeRule(0, 100));
-// for (let i = 0; i < settings.numberOfBounces * 2; i += 1) {
-//   let isBouncingUp = i % 2;
-//   console.log(i, isBouncingUp ? true : false);
-//   if (i === settings.numberOfBounces * 2)
-//     // @ts-ignore NOTE - It actually does exist, typescript is crazy
-//     keyframe.appendRule(generateKeyframeRule(100, 0));
-//   isBouncingUp
-//     ? // @ts-ignore NOTE - It actually does exist, typescript is crazy
-//       keyframe.appendRule(
-//         `${
-//           100 - keyframePercentRemaining
-//         }% {bottom: ${keyframePercentRemaining}%; animation-timing-function: ease-in-out;}`
-//       )
-//     : // @ts-ignore NOTE - It actually does exist, typescript is crazy
-//       keyframe.appendRule(
-//         `${
-//           100 - keyframePercentRemaining
-//         }% {bottom: 0%; animation-timing-function: cubic-bezier(.27,-0.01,.38,.98)}`
-//       );
-//   keyframePercentRemaining = keyframePercentRemaining / 2;
-// }
-// console.log(keyframe);
