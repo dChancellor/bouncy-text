@@ -1,9 +1,9 @@
 let settings = {
     general: {
-        timeBetween: 3,
+        timeBetween: 4,
     },
     animations: {
-        bounceIn: { duration: 2, numberOfBounces: 4 },
+        bounceIn: { duration: 3, numberOfBounces: 1 },
     },
 };
 const newKeyframeRule = (sheet, name) => {
@@ -37,26 +37,19 @@ const init = (props = settings) => {
         setup[key](emptyKeyframe, value);
     });
 };
-const generateKeyframeRule = (percent, value) => `${percent}%: bottom: ${value}%`;
+const generateKeyframeRule = (percent, value) => `${percent}% { bottom: ${value}%;}`;
+const topOfDiv = `bottom:0%`;
+const bottomOfDiv = `bottom: 100%`;
 const setup = {
     bounceIn: (keyframe, settings) => {
         let keyframePercentRemaining = 100;
-        for (let i = 0; i <= settings.numberOfBounces; i += 1) {
-            let isBouncingUp = i % 2;
-            if (i === settings.numberOfBounces)
-                keyframe.appendRule(generateKeyframeRule('100%', '100%'));
-            console.log();
-            // !isBouncingUp
-            //   ? // @ts-ignore NOTE - It actually does exist, typescript is crazy
-            //     keyframe.appendRule(
-            //       `${keyframePercentRemaining}% {bottom: ${
-            //         100 - keyframePercentRemaining
-            //       }%; animation-timing-function: ease-in-out;}`
-            //     )
-            //   : // @ts-ignore NOTE - It actually does exist, typescript is crazy
-            //     keyframe.appendRule(
-            //       `${keyframePercentRemaining}% {bottom: 0%; animation-timing-function: ease-out;}`
-            //     );
+        // @ts-ignore NOTE - It actually does exist, typescript is crazy
+        keyframe.appendRule(`0% {bottom: 0%;}`);
+        for (let i = 0; i < settings.numberOfBounces; i += 1) {
+            let jumpLoop = keyframePercentRemaining / 2;
+            keyframe.appendRule(`${keyframePercentRemaining / 4}% {bottom: 0%;}`);
+            keyframe.appendRule(`${jumpLoop}% {bottom: ${jumpLoop}%;}`);
+            keyframe.appendRule(`${keyframePercentRemaining - jumpLoop / 2}% {bottom: 0%;}`);
             keyframePercentRemaining = keyframePercentRemaining / 2;
         }
         console.log(keyframe);
@@ -76,3 +69,28 @@ const animation = {
     },
 };
 export default animation;
+// let keyframePercentRemaining = 100;
+// // @ts-ignore NOTE - It actually does exist, typescript is crazy
+// // keyframe.appendRule(generateKeyframeRule(0, 100));
+// for (let i = 0; i < settings.numberOfBounces * 2; i += 1) {
+//   let isBouncingUp = i % 2;
+//   console.log(i, isBouncingUp ? true : false);
+//   if (i === settings.numberOfBounces * 2)
+//     // @ts-ignore NOTE - It actually does exist, typescript is crazy
+//     keyframe.appendRule(generateKeyframeRule(100, 0));
+//   isBouncingUp
+//     ? // @ts-ignore NOTE - It actually does exist, typescript is crazy
+//       keyframe.appendRule(
+//         `${
+//           100 - keyframePercentRemaining
+//         }% {bottom: ${keyframePercentRemaining}%; animation-timing-function: ease-in-out;}`
+//       )
+//     : // @ts-ignore NOTE - It actually does exist, typescript is crazy
+//       keyframe.appendRule(
+//         `${
+//           100 - keyframePercentRemaining
+//         }% {bottom: 0%; animation-timing-function: cubic-bezier(.27,-0.01,.38,.98)}`
+//       );
+//   keyframePercentRemaining = keyframePercentRemaining / 2;
+// }
+// console.log(keyframe);
