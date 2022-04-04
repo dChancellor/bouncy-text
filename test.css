@@ -1,0 +1,5 @@
+@keyframes bounceIn {
+    100% { bottom: 0%; animation-timing-function: ease-in-out; }
+    50% { bottom: 0%; animation-timing-function: ease-out; }
+    25% { bottom: 75%; animation-timing-function: ease-in-out; }
+    12.5% { bottom: 0%; animation-timing-function: ease-out; };
